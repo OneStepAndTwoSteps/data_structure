@@ -1,0 +1,28 @@
+#插入排序：
+#   通俗的将就是后面的数分别和前面的所有数进行比较，插入到最合适的位置  如[1,4,5,3,2] 3 会找到4的前面插入因为第一次排序3最适合的位置是1的后面。
+
+# for i in range(len(a)):
+#     print(i)
+
+def insert_sort(list1):
+    for i in range(1,len(list1)):
+        value=list1[i]
+        j=i-1
+        while j>=0 and list1[j] > value:
+            list1[j+1]=list1[j]
+            j=j-1
+            # print(list1)
+
+        list1[j+1]=value
+
+
+        # print(list1)
+
+b=[random.randint(1,100) for i in range(10000)]
+
+start_time=time.time()
+
+insert_sort(b)
+end_time=time.time()
+spend_time=end_time-start_time
+print(spend_time)
