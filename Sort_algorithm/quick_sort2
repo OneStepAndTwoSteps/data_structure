@@ -1,0 +1,45 @@
+from typing import List
+import random,time
+
+
+def quick_sort(a: List[int]):
+    result=_quick_sort_between(a, 0, len(a) - 1)
+    return result
+
+def _quick_sort_between(a: List[int], low: int, high: int):
+    if low < high:
+        # get a random position as the pivot
+        k = random.randint(low, high)
+        a[low], a[k] = a[k], a[low]
+        print(a[low])
+
+        m = _partition(a, low, high)  # a[m] is in final position
+        _quick_sort_between(a, low, m - 1)
+        _quick_sort_between(a, m + 1, high)
+    return
+
+def _partition(a: List[int], low: int, high: int):
+    pivot, j = a[low], low
+    for i in range(low + 1, high + 1):
+        print("i:",i)
+        print("first_j:",j)
+        print("a:",a)
+        if a[i] <= pivot:
+            j += 1
+            print("for_j:",j)
+            a[j], a[i] = a[i], a[j]  # swap
+    a[low], a[j] = a[j], a[low]
+    print("a2：",a)
+    print("j：",j)
+    return j
+
+a=[4,3,2,8,7,6,1]
+# a=[i for i in range(100000)]
+# a=[random.randint(1,100000) for i in range(100000)]
+# start_time=time.time()
+result=quick_sort(a)
+# spend_time=time.time()-start_time
+# print(spend_time)
+print(a)
+
+# print(result)
