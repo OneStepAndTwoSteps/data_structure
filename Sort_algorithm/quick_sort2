@@ -10,10 +10,12 @@ def _quick_sort_between(a: List[int], low: int, high: int):
     if low < high:
         # get a random position as the pivot
         k = random.randint(low, high)
+        # 将pivot放在传入的列表的做左侧
         a[low], a[k] = a[k], a[low]
-        print(a[low])
 
+        # 获得m的值，作为分区的区间，用于下面传值时作为左区间排序和右区间排序
         m = _partition(a, low, high)  # a[m] is in final position
+
         _quick_sort_between(a, low, m - 1)
         _quick_sort_between(a, m + 1, high)
     return
@@ -21,16 +23,14 @@ def _quick_sort_between(a: List[int], low: int, high: int):
 def _partition(a: List[int], low: int, high: int):
     pivot, j = a[low], low
     for i in range(low + 1, high + 1):
-        print("i:",i)
-        print("first_j:",j)
-        print("a:",a)
+        # 当 从左向右遍历元素 当发现pivot大于 a[i] 元素时，j+1 ，并且换位置，否则不做判断。目的就是为了 当发现小于pivot的元素将其和比pivot大
+        # 的那个元素位置互换，这样最后只要将pivot和a[j]那个元素位置互换 就可以得到左侧元素小于pivot右侧元素大于pivot了。
         if a[i] <= pivot:
             j += 1
-            print("for_j:",j)
             a[j], a[i] = a[i], a[j]  # swap
+
     a[low], a[j] = a[j], a[low]
-    print("a2：",a)
-    print("j：",j)
+
     return j
 
 a=[4,3,2,8,7,6,1]
@@ -41,5 +41,36 @@ result=quick_sort(a)
 # spend_time=time.time()-start_time
 # print(spend_time)
 print(a)
+'''
+举个例子：
+    当pivot为4时，执行第一次 _partition 函数 
 
-# print(result)
+    i: 1  j: 0
+    
+    执行第一次for循环 4>3 ，执行j+1      a[1]=a[1]
+    元素为 a: [4, 3, 2, 8, 7, 6, 1]     
+    i: 2  j+1: 1
+    
+    执行第二次for循环 4>2 ，执行j+1  a[2]=a[2]    
+    元素为 a: [4, 3, 2, 8, 7, 6, 1]     
+    i: 3  j+1: 2
+    
+    执行第三次for循环 4<8 不做操作 j仍然等于2
+    元素为 a: [4, 3, 2, 8, 7, 6, 1]    
+
+        ……
+        
+    执行第六次for循环    4>1 执行j+1 得到j=3  此时元素互换 1和8换位置 a[j]=1 
+    元素为 a: [4, 3, 2, 8, 7, 6, 1]     
+    i: 6  j+1: 3 
+    
+    循环结束 执行 下面代码
+    a[low], a[j] = a[j], a[low]
+
+    其实for循环的意义就是找比pivot大的元素，如果没找到就让j+1(加一之后其实就是比pivot小的那个数的后一个数)
+    
+    如果找到 j则不做操作，为的就是在下一次找到比pivot小的元素时和j=j+1 这个下标的元素做交换，这样比pivot小的数和比pivot大的数互换了位置
+    
+    之后pivot只要和这个小的数在互换位置，就可以得到 左侧小于pivot右侧大于pivot的数组了，之后在进行响应的递归操作即可
+
+'''
