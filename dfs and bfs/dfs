@@ -1,5 +1,6 @@
 #author py chen
 
+
 from typing import List, Optional, Generator, IO
 
 
@@ -11,11 +12,13 @@ class Graph:
         self._num_vertices = num_vertices
         self._adjacency = [[] for _ in range(num_vertices)]
 
-    #表示路径
+    # 表示路径
+    # 最终生成的[[1, 3], [0, 2, 4], [1, 5], [0, 4], [1, 3, 5, 6], [2, 4, 7], [4, 7], [5, 6]]表示
+    # 第一个顶点0指向 1,3 个顶点 顶点1指向0, 2, 4个顶点
     def add_edge(self, s: int, t: int) -> None:
         self._adjacency[s].append(t)
         self._adjacency[t].append(s)
-
+    
     # 输出路径
     def _generate_path(self, s: int, t: int, prev: List[Optional[int]]) -> Generator[str, None, None]:
         # 如果 prev[t]为true或者 s == t  到达终点则不再生成路径。
