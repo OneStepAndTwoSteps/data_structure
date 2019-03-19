@@ -1,0 +1,77 @@
+#author py chen
+from typing import List, Optional, Generator, IO
+from collections import deque #deque是为了高效实现插入和删除操作的双向列表，适合用于队列和栈
+
+
+class Graph:
+    """Undirected graph."""
+
+    def __init__(self, num_vertices: int):
+        self._num_vertices = num_vertices
+        self._adjacency = [[] for _ in range(num_vertices)]
+
+    def add_edge(self, s: int, t: int) -> None:
+        self._adjacency[s].append(t)
+        self._adjacency[t].append(s)
+
+    def _generate_path(self, s: int, t: int, prev: List[Optional[int]]) -> Generator[str, None, None]:
+        # 第一次调用_generate_path函数传来的值是 0 7 [None, 0, 1, 0, 1, 2, 4, 5]
+        # 第二次调用_generate_path函数传来的值是 0 5 [None, 0, 1, 0, 1, 2, 4, 5]
+        if prev[t] or s != t:
+            # 这里又调用了_generate_path
+            # 参数的值为 0 5 [None, 0, 1, 0, 1, 2, 4, 5]
+            yield from self._generate_path(s, prev[t], prev)
+            # print("yield from",str(t))
+        # print("yield",str(t))
+        yield str(t)
+
+    def bfs(self, s: int, t: int) -> IO[str]:
+        """Print out the path from Vertex s to Vertex t
+        using bfs.
+        """
+        if s == t: return
+        print(self._adjacency)
+
+        visited = [False] * self._num_vertices
+        visited[s] = True
+        # 创建一个双向列表，适合用于队列和栈
+        q = deque()
+        q.append(s)
+        prev = [None] * self._num_vertices
+
+        while q:
+            print(q)
+            v = q.popleft()
+            print("v: %s self._adjacency[v]"%v,self._adjacency[v])
+            for neighbour in self._adjacency[v]:
+                if not visited[neighbour]:
+                    # print("%s second_visited[neighbour]: " % neighbour, visited[neighbour])
+                    prev[neighbour] = v
+                    # print(prev)
+                    if neighbour == t:
+                        # print("neighbour begin",neighbour)
+                        print("prev",prev)
+                        print("->".join(self._generate_path(s, t, prev)))
+                        # print("neighbour end",neighbour)
+                        print("visited", visited)
+                        return
+
+                    visited[neighbour] = True
+                    # print("\n")
+                    q.append(neighbour)
+
+if __name__ == "__main__":
+    graph = Graph(8)
+
+    graph.add_edge(0, 1)
+    graph.add_edge(0, 3)
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 4)
+    graph.add_edge(2, 5)
+    graph.add_edge(3, 4)
+    graph.add_edge(4, 5)
+    graph.add_edge(4, 6)
+    graph.add_edge(5, 7)
+    graph.add_edge(6, 7)
+
+    graph.bfs(0, 7)
