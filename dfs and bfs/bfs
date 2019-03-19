@@ -1,4 +1,5 @@
 #author py chen
+
 from typing import List, Optional, Generator, IO
 from collections import deque #deque是为了高效实现插入和删除操作的双向列表，适合用于队列和栈
 
@@ -9,7 +10,9 @@ class Graph:
     def __init__(self, num_vertices: int):
         self._num_vertices = num_vertices
         self._adjacency = [[] for _ in range(num_vertices)]
-
+    # 表示路径
+    # 最终生成的[[1, 3], [0, 2, 4], [1, 5], [0, 4], [1, 3, 5, 6], [2, 4, 7], [4, 7], [5, 6]]表示
+    # 第一个顶点0指向 1,3 个顶点 顶点1指向0, 2, 4个顶点
     def add_edge(self, s: int, t: int) -> None:
         self._adjacency[s].append(t)
         self._adjacency[t].append(s)
@@ -31,19 +34,53 @@ class Graph:
         """
         if s == t: return
         print(self._adjacency)
-
+        #是用来记录已经被访问的顶点，用来避免顶点被重复访问。如果顶点 q 被访问，那相应的 visited[q] 会被设置为 true。避免重复访问。
         visited = [False] * self._num_vertices
+        # 开始s是0 设置为True表示0已经被搜索过了，不要再次搜索。
         visited[s] = True
         # 创建一个双向列表，适合用于队列和栈
+        # q是一个队列，用来存储已经被访问、但相连的顶点还没有被访问的顶点。
+        # 因为广度优先搜索是逐层访问的，也就是说，我们只有把第 k 层的顶点都访问完成之后，才能访问第 k+1 层的顶点。
+        # 当我们访问到第 k 层的顶点的时候，我们需要把第 k 层的顶点记录下来，稍后才能通过第 k 层的顶点来找第 k+1 层的顶点。
+        # 所以，我们用这个队列来实现记录的功能。
         q = deque()
         q.append(s)
-        prev = [None] * self._num_vertices
 
+        # prev 用来记录搜索路径。当我们从顶点 s 开始，深度优先搜索到顶点 t 后，prev 数组中存储的就是搜索的路径。
+        # 不过，这个路径是反向存储的。prev[w] 存储的是，顶点 w 是从哪个前驱顶点遍历过来的。
+        # 比如，我们通过顶点 2 的邻接表访问到顶点 3，那 prev[3] 就等于 2。为了正向打印出路径，我们需要递归地来打印，<--- 重点
+        # 你可以看下 print() 函数的实现方式。
+        prev = [None] * self._num_vertices
+        # 举个例子：
+        '''
+                        0-----1-----2
+                        |     |     |
+                        3-----4-----5
+                              |     |
+                              6-----7
+        '''
+        # prev = [None, 0, 1, 0, 1, 2, 4, 5]
+        # 第一个位置因为是源点，所以是开始的地方，那意味着上一步为None因为它没有上一步
+        # 第二个位置是0 表示去往第二个位置prev[1] 即上图的1那个位置 的是由顶点0搜索到的
+        # 第三个位置是1 表示去往第三个位置prev[2] 即上图的2那个位置 的是由顶点1搜索到的
+        # 第四个位置是0 表示去往第四个位置prev[3] 即上图的3那个位置 的是由顶点0搜索到的
+        
+        
+        
+        #其实结合下面的代码你可以发现：他的搜索规律 先搜索1，3，然后是2，4，然后是5，6
+        # 刚开始s=0 下面我们 self._adjacency[v]即为 self._adjacency[0] 为[1,3],其实这个就是顶点0连接着的顶点呀。
+        # 之后我们会在prev的prev[1] 和 prev[3]中标记顶点已经访问(True)，因为顶点1和顶点3不是我们要找的顶点.
+        # 当neighbour为 1 时，我们可以获取到顶点1连接着的顶点 [0, 2, 4]，当neighbour为 3 时，我们可以获取到顶点3连接着的顶点[0, 4]，
+        # 因为顶点 0 已经搜索过了，所以他会接下去搜索 2 和 4  并获取他相邻的顶点 [1, 5] 和 [1, 3, 5, 6]
+        # 因为顶点 1，3 已经搜索过了，所以接下去搜索5，6 获取到他相邻的顶点 [2, 4, 7] 和 [4, 7]
+        # 因为顶点 2，4 已经搜索过了, 所以接下来搜索到了 7 打印最短路径退出、 
+            
         while q:
             print(q)
             v = q.popleft()
             print("v: %s self._adjacency[v]"%v,self._adjacency[v])
             for neighbour in self._adjacency[v]:
+                #如果visited[neighbour]不为True
                 if not visited[neighbour]:
                     # print("%s second_visited[neighbour]: " % neighbour, visited[neighbour])
                     prev[neighbour] = v
@@ -62,7 +99,13 @@ class Graph:
 
 if __name__ == "__main__":
     graph = Graph(8)
-
+    '''
+        0-----1-----2
+        |     |     |
+        3-----4-----5
+              |     |
+              6-----7
+    '''
     graph.add_edge(0, 1)
     graph.add_edge(0, 3)
     graph.add_edge(1, 2)
@@ -73,5 +116,5 @@ if __name__ == "__main__":
     graph.add_edge(4, 6)
     graph.add_edge(5, 7)
     graph.add_edge(6, 7)
-
+    #表示从顶点0开始搜索直到找到顶点7
     graph.bfs(0, 7)
