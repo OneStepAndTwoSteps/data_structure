@@ -1,4 +1,4 @@
-有环时两个指针一定会相遇的数学证明
+# 有环时两个指针一定会相遇的数学证明
 
 在做这道题的时候可能会有疑惑：为什么在有环的时候两个指针一定会相遇？这里给出数学证明。
 
@@ -10,7 +10,7 @@ fast 已经在环内走了 N1 圈（向下取整）
 假设 slow 再经过 i 步与 fast 相遇
 环的周长为 C
 fast 和 slow 走过的总路程分别为 disFast 和 disSlow
-示意图如下：
+## 示意图如下：
 
 ![Image text](https://raw.githubusercontent.com/OneStepAndTwoSteps/data_structure/master/static/1.jpg)
 
@@ -41,7 +41,7 @@ fast 又走了一圈再次回到之前的相遇点。
 
 
 
-求环的入口
+# 求环的入口
 在上一个问题之后，还有一个相关的问题，即如果此链表有环，求环的入口节点。直接想此算法可能比较难解，所以这个问题可以尝试着从数学上入手。
 
 数学
@@ -53,7 +53,7 @@ L3 为从相遇点向前到环入口的距离 (按照指针前进的方向计算
 C 为环的周长
 N1 和 N2 分别为 slow 和 fast 在相遇时走过的圈数（向下取整）
 disSlow  和 disFast 分别为 slow 和 fast 在相遇时走过的距离
-示意图如下：
+## 示意图如下：
 
 ![Image text](https://raw.githubusercontent.com/OneStepAndTwoSteps/data_structure/master/static/2.jpg)
 
@@ -88,7 +88,7 @@ N2 >= 2N1
 让两个指针其中一个从链表头 head 出发，一次走一步，让另一个指针从相遇点出发，也一次走一步，相遇点就是环的入口。
 
 
-
+## 笔记
 第一个部分判断是否有环，判断的时候除以周长取余，可以这样理解比如我们在操场跑步，有的人跑的快有的人跑的慢，跑的快的人最后肯定会和跑的慢的人相遇，那在哪里
 相遇呢？
 
